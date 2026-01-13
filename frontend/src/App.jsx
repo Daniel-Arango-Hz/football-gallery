@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 
 import Gallery from "./pages/Gallery.jsx";
+import News from "./pages/News.jsx";
 
 export default function App() {
   return (
@@ -14,6 +15,7 @@ export default function App() {
         <Route path="/" element={<Navigate to="/galería" replace />} />
          {/*<Route path="/home" element={<Home />} />*/}
         <Route path="/galería" element={<Gallery />} />
+        <Route path="/noticias" element={<News />} />
       </Routes>
       <Footer />
     </div>

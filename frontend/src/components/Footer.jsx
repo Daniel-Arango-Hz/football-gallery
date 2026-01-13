@@ -2,15 +2,15 @@ import React from "react";
 
 export default function Footer() {
   return (
-    <footer className="bg-orange-50 py-10 px-10 mt-16">
+    <footer className="bg-blue-50 py-10 px-10 mt-16">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
-          <h3 className="font-bold">FC Club Deportivo</h3>
+          <h3 className="font-bold text-gray-900">FC Club Deportivo</h3>
           <p className="text-sm text-gray-600">Revive los mejores momentos de nuestro equipo a través de nuestra galería oficial.</p>
         </div>
 
         <div>
-          <h3 className="font-bold">Navegación</h3>
+          <h3 className="font-bold text-gray-900">Navegación</h3>
           <ul className="text-sm text-gray-600 space-y-1">
             <li>Inicio</li>
             <li>Historia</li>
@@ -20,7 +20,7 @@ export default function Footer() {
         </div>
 
         <div>
-          <h3 className="font-bold">Contacto</h3>
+          <h3 className="font-bold text-gray-900">Contacto</h3>
           <p className="text-sm text-gray-600">
             Estadio Municipal <br />
             Calle del Deporte, 123 <br />
@@ -30,7 +30,7 @@ export default function Footer() {
         </div>
 
         <div>
-          <h3 className="font-bold">Créditos</h3>
+          <h3 className="font-bold text-gray-900">Créditos</h3>
           <p className="text-sm text-gray-600">
             Fotografía: Juan Martín <br />
             Video: Media Sports <br />

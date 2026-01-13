@@ -24,12 +24,14 @@ export default function Navbar() {
       <div className="flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center space-x-2">
-          <div className="w-10 h-10 rounded-full bg-orange-600 flex items-center justify-center text-white font-bold">
-            FC
-          </div>
+          <img
+            src="/img/escudo-club.png"
+            alt="Escudo Club Deportivo"
+            className="w-15 h-15 object-contain"
+          />
           <div>
-            <h1 className="font-bold">Club Deportivo</h1>
-            <p className="text-sm text-gray-500">Galería Oficial</p>
+            <h1 className="font-bold text-gray-900">Club Deportivo Guacari</h1>
+            <p className="font-bold text-gray-900"></p>
           </div>
         </div>
 
@@ -38,7 +40,11 @@ export default function Navbar() {
           {navItems.map((item) => (
             <li key={item}>
               {item === "Galería" ? (
-                <NavLink to="/galería" className="text-orange-600 font-semibold">
+                <NavLink to="/galería" className="text-blue-700 font-semibold">
+                  {item}
+                </NavLink>
+              ) : item === "Noticias" ? (
+                <NavLink to="/noticias" className="text-blue-700 font-semibold">
                   {item}
                 </NavLink>
               ) : (
@@ -79,7 +85,15 @@ export default function Navbar() {
               {item === "Galería" ? (
                 <NavLink
                   to="/galería"
-                  className="text-orange-600 font-semibold block"
+                  className="text-blue-700 font-semibold block"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {item}
+                </NavLink>
+              ) : item === "Noticias" ? (
+                <NavLink
+                  to="/noticias"
+                  className="text-blue-700 font-semibold block"
                   onClick={() => setMenuOpen(false)}
                 >
                   {item}

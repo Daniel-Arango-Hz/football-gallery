@@ -30,7 +30,19 @@ export default function Gallery() {
     {
       id: 1,
       type: "image",
-      src: "/img/football-match-celebration-goal.jpg",
+      src: "/img/a422a643-1573-441d-8e71-843c5fc3a5e0.jpeg",
+      title: "Gol de la Victoria - Final Liga 2024",
+      description: "Juan Pérez anota el gol decisivo en el minuto 89",
+      category: "partidos",
+      filter: "2024",
+      likes: 234,
+      date: "2024-05-15",
+    },
+  
+    {
+      id: 5,
+      type: "image",
+      src: "/img/5b0368eb-231c-49b5-822e-23fbbd18f9d0.jpeg",
       title: "Gol de la Victoria - Final Liga 2024",
       description: "Juan Pérez anota el gol decisivo en el minuto 89",
       category: "partidos",
@@ -41,7 +53,18 @@ export default function Gallery() {
     {
       id: 2,
       type: "image",
-      src: "/img/football-training-session-players.jpg",
+      src: "/img/fad43edc-631c-4c79-a093-9b01ea1b8912.jpeg",
+      title: "Entrenamiento Matutino",
+      description: "Preparación para el próximo partido",
+      category: "entrenamientos",
+      filter: "2024",
+      likes: 89,
+      date: "2024-05-10",
+    },
+     {
+      id: 6,
+      type: "image",
+      src: "/img/68d623b4-2a84-4991-a59a-76d8ff807ca4.jpeg",
       title: "Entrenamiento Matutino",
       description: "Preparación para el próximo partido",
       category: "entrenamientos",
@@ -52,7 +75,7 @@ export default function Gallery() {
     {
       id: 3,
       type: "video",
-      src: "/videos/700_F_95326106_luXBbZS4XBTn0d6EXJDS2aFVOtVjG9Ns_ST.mp4",
+      src: "/videos/video.mp4",
       titulo: "La Hinchada en Acción",
       desc: "Ambiente espectacular en el estadio",
       tag: "aficion",
@@ -62,10 +85,21 @@ export default function Gallery() {
     {
       id: 4,
       type: "image",
-      src: "/img/football-training-session-players.jpg",
+      src: "/img/83efed00-a858-46e3-9fc8-9d53af8cb76f.jpeg",
       title: "Levantando la Copa",
       description: "Momento histórico del campeonato",
       category: "trofeos",
+      filter: "2024",
+      likes: 789,
+      date: "2024-05-20",
+    },
+     {
+      id: 7,
+      type: "image",
+      src: "/img/3b107ac5-8dc4-43d3-8301-f3d21ef89306.jpeg",
+      title: "Levantando la Copa",
+      description: "Momento histórico del campeonato",
+      category: "eventos",
       filter: "2024",
       likes: 789,
       date: "2024-05-20",
@@ -192,6 +226,7 @@ export default function Gallery() {
             download
             className="hover:text-green-400"
             aria-label="Descargar"
+            onClick={(e) => e.stopPropagation()}
           >
             <Download size={18} />
           </a>

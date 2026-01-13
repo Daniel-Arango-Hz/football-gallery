@@ -17,7 +17,7 @@ export default function GalleryFilter({
         <input
           type="text"
           placeholder="Buscar fotos..."
-          className="w-full pl-3 pr-3 py-2 border rounded-lg"
+          className="w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -25,14 +25,14 @@ export default function GalleryFilter({
 
       {/* Categorías */}
       <div>
-        <h4 className="font-semibold mb-3 text-gray-700">Categorías</h4>
+        <h4 className="font-semibold mb-3 text-gray-900">Categorías</h4>
         <div className="space-y-2">
           {categories.map((c) => (
             <button
               key={c.id}
               onClick={() => setSelectedCategory(c.id)}
               className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition
-                ${selectedCategory === c.id ? "bg-orange-600 text-white" : "hover:bg-orange-50"}`}
+                ${selectedCategory === c.id ? "bg-blue-600 text-white" : "hover:bg-blue-50"}`}
             >
               <span>{c.name}</span>
               <span
@@ -47,14 +47,14 @@ export default function GalleryFilter({
 
       {/* Filtros */}
       <div>
-        <h4 className="font-semibold mb-3 flex items-center text-gray-700">Filtros</h4>
+        <h4 className="font-semibold mb-3 flex items-center text-gray-900">Filtros</h4>
         <div className="space-y-2">
           {filters.map((f) => (
             <button
               key={f.id}
               onClick={() => setSelectedFilter(f.id)}
               className={`w-full text-left px-3 py-2 rounded-lg text-sm transition
-                ${selectedFilter === f.id ? "bg-orange-100 text-orange-700" : "hover:bg-orange-50"}`}
+                ${selectedFilter === f.id ? "bg-blue-100 text-blue-700" : "hover:bg-blue-50"}`}
             >
               {f.name}
             </button>
