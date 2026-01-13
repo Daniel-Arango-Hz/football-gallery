@@ -1,6 +1,5 @@
-import React, { useState } from "react";
-import { Calendar, Tag } from "lucide-react";
-import Hero from "../components/Hero";
+import React, { useState, useEffect } from "react";
+import { Calendar, Tag, ChevronLeft, ChevronRight } from "lucide-react";
 import Socials from "../components/Socials";
 
 const noticiasData = [
@@ -38,14 +37,79 @@ const noticiasData = [
 
 export default function News() {
   const [selectedNews, setSelectedNews] = useState(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
-  // Noticia destacada (la primera)
-  const featuredNews = noticiasData[0];
-  const otherNews = noticiasData.slice(1);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % noticiasData.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const goToPrevious = () => {
+    setCurrentSlide((prev) => (prev - 1 + noticiasData.length) % noticiasData.length);
+  };
+
+  const goToNext = () => {
+    setCurrentSlide((prev) => (prev + 1) % noticiasData.length);
+  };
 
   return (
     <div>
-      <Hero />
+      {/* Carousel de Noticias */}
+      <section className="py-8 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="relative h-96 md:h-[500px] rounded-lg overflow-hidden shadow-2xl">
+            {noticiasData.map((noticia, index) => (
+              <div
+                key={noticia.id}
+                className={`absolute inset-0 transition-opacity duration-1000 ${
+                  index === currentSlide ? "opacity-100" : "opacity-0"
+                }`}
+              >
+                <img
+                  src={noticia.imagen}
+                  alt={noticia.titulo}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/40"></div>
+                <div className="relative h-full flex flex-col items-center justify-center text-center text-white px-4">
+              
+                  <h2 className="text-4xl md:text-5xl font-bold mb-4">{noticia.titulo}</h2>
+                  <p className="text-lg md:text-xl font-light">{noticia.excerpt}</p>
+                </div>
+              </div>
+            ))}
+
+            {/* Controles */}
+            <button
+              onClick={goToPrevious}
+              className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/75 text-gray-900 p-3 rounded-full z-10 transition"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <button
+              onClick={goToNext}
+              className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/50 hover:bg-white/75 text-gray-900 p-3 rounded-full z-10 transition"
+            >
+              <ChevronRight size={24} />
+            </button>
+
+            {/* Indicadores */}
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+              {noticiasData.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-3 h-3 rounded-full transition ${
+                    index === currentSlide ? "bg-white w-6" : "bg-white/50"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
       
       <section className="py-16 bg-gray-50">
         <div className="max-w-6xl mx-auto px-4">
@@ -54,37 +118,37 @@ export default function News() {
           {/* Noticia Destacada */}
           <div
             className="mb-12 bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition cursor-pointer group"
-            onClick={() => setSelectedNews(featuredNews)}
+            onClick={() => setSelectedNews(noticiasData[0])}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative overflow-hidden h-64 md:h-auto">
                 <img
-                  src={featuredNews.imagen}
-                  alt={featuredNews.titulo}
+                  src={noticiasData[0].imagen}
+                  alt={noticiasData[0].titulo}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
                 <span className="absolute top-4 left-4 bg-blue-700 text-white text-xs px-4 py-2 rounded-full font-semibold">
-                  {featuredNews.categoria}
+                  {noticiasData[0].categoria}
                 </span>
               </div>
 
               <div className="p-6 md:p-8 flex flex-col justify-center">
                 <div className="flex items-center gap-2 text-gray-500 text-sm mb-3">
                   <Calendar size={16} />
-                  {new Date(featuredNews.fecha).toLocaleDateString("es-ES", {
+                  {new Date(noticiasData[0].fecha).toLocaleDateString("es-ES", {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
                   })}
                 </div>
                 <h2 className="text-3xl font-bold text-gray-900 mb-3">
-                  {featuredNews.titulo}
+                  {noticiasData[0].titulo}
                 </h2>
                 <p className="text-gray-600 mb-4 leading-relaxed">
-                  {featuredNews.excerpt}
+                  {noticiasData[0].excerpt}
                 </p>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-500">Por {featuredNews.autor}</span>
+                  <span className="text-sm text-gray-500">Por {noticiasData[0].autor}</span>
                 </div>
                 <button className="mt-4 text-blue-700 font-semibold hover:text-blue-900 flex items-center gap-2">
                   Leer artículo completo →
@@ -96,7 +160,7 @@ export default function News() {
           {/* Otras Noticias */}
           <h3 className="text-2xl font-bold mb-6 text-gray-900">Últimas Noticias</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {otherNews.map((noticia) => (
+            {noticiasData.slice(1).map((noticia) => (
               <article
                 key={noticia.id}
                 className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer group"

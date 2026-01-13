@@ -39,7 +39,11 @@ export default function Navbar() {
         <ul className="hidden md:flex space-x-6">
           {navItems.map((item) => (
             <li key={item}>
-              {item === "Galería" ? (
+              {item === "Inicio" ? (
+                <NavLink to="/" className="text-blue-700 font-semibold">
+                  {item}
+                </NavLink>
+              ) : item === "Galería" ? (
                 <NavLink to="/galería" className="text-blue-700 font-semibold">
                   {item}
                 </NavLink>
@@ -82,7 +86,15 @@ export default function Navbar() {
         <ul className="flex flex-col mt-4 space-y-2 md:hidden">
           {navItems.map((item) => (
             <li key={item}>
-              {item === "Galería" ? (
+              {item === "Inicio" ? (
+                <NavLink
+                  to="/"
+                  className="text-blue-700 font-semibold block"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  {item}
+                </NavLink>
+              ) : item === "Galería" ? (
                 <NavLink
                   to="/galería"
                   className="text-blue-700 font-semibold block"

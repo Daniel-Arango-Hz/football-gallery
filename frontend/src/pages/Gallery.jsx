@@ -1,7 +1,7 @@
 // src/pages/Gallery.jsx
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { Heart, Share2, Download } from "lucide-react";
-import Hero from "../components/Hero";
+import Carousel from "../components/Carousel";
 import Featured from "../components/Featured";
 import Socials from "../components/Socials";
 import GalleryFilter from "../components/GalleryFilter";
@@ -148,7 +148,9 @@ export default function Gallery() {
 
   return (
     <div>
-      <Hero />
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <Carousel images={galleryItems.filter((item) => item.type === "image").slice(0, 5)} />
+      </div>
       <Featured />
 
       <section className="py-16">
