@@ -13,7 +13,14 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navItems = ["Inicio", "Historia", "Noticias", "Galería", "Contacto"];
+  const navItems = [
+    { label: "Inicio", path: "/" },
+    { label: "Historia", path: "/historia" },
+    { label: "Jugadores", path: "/jugadores" },
+    { label: "Noticias", path: "/noticias" },
+    { label: "Galería", path: "/galería" },
+    { label: "Patrocinios", path: "/patrocinios" },
+  ];
 
   return (
     <nav
@@ -38,22 +45,17 @@ export default function Navbar() {
         {/* Menu Desktop */}
         <ul className="hidden md:flex space-x-6">
           {navItems.map((item) => (
-            <li key={item}>
-              {item === "Inicio" ? (
-                <NavLink to="/" className="text-blue-700 font-semibold">
-                  {item}
-                </NavLink>
-              ) : item === "Galería" ? (
-                <NavLink to="/galería" className="text-blue-700 font-semibold">
-                  {item}
-                </NavLink>
-              ) : item === "Noticias" ? (
-                <NavLink to="/noticias" className="text-blue-700 font-semibold">
-                  {item}
-                </NavLink>
-              ) : (
-                <span className="text-gray-400 cursor-not-allowed">{item}</span>
-              )}
+            <li key={item.path}>
+              <NavLink
+                to={item.path}
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-blue-700 font-semibold"
+                    : "text-gray-700 font-semibold hover:text-blue-700 transition"
+                }
+              >
+                {item.label}
+              </NavLink>
             </li>
           ))}
         </ul>
@@ -85,34 +87,18 @@ export default function Navbar() {
       {menuOpen && (
         <ul className="flex flex-col mt-4 space-y-2 md:hidden">
           {navItems.map((item) => (
-            <li key={item}>
-              {item === "Inicio" ? (
-                <NavLink
-                  to="/"
-                  className="text-blue-700 font-semibold block"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {item}
-                </NavLink>
-              ) : item === "Galería" ? (
-                <NavLink
-                  to="/galería"
-                  className="text-blue-700 font-semibold block"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {item}
-                </NavLink>
-              ) : item === "Noticias" ? (
-                <NavLink
-                  to="/noticias"
-                  className="text-blue-700 font-semibold block"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {item}
-                </NavLink>
-              ) : (
-                <span className="text-gray-400 cursor-not-allowed block">{item}</span>
-              )}
+            <li key={item.path}>
+              <NavLink
+                to={item.path}
+                className={({ isActive }) =>
+                  isActive
+                    ? "text-blue-700 font-semibold block"
+                    : "text-gray-700 font-semibold block hover:text-blue-700"
+                }
+                onClick={() => setMenuOpen(false)}
+              >
+                {item.label}
+              </NavLink>
             </li>
           ))}
         </ul>

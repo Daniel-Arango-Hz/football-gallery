@@ -26,6 +26,7 @@ export default function Gallery() {
     { id: "copa", name: "Copa del Rey" },
   ];
 
+  // Estructura normalizada: todos los items tienen las mismas propiedades
   const galleryItems = [
     {
       id: 1,
@@ -37,8 +38,8 @@ export default function Gallery() {
       filter: "2024",
       likes: 234,
       date: "2024-05-15",
+      poster: defaultPoster,
     },
-  
     {
       id: 5,
       type: "image",
@@ -49,6 +50,7 @@ export default function Gallery() {
       filter: "2024",
       likes: 234,
       date: "2024-05-15",
+      poster: defaultPoster,
     },
     {
       id: 2,
@@ -60,8 +62,9 @@ export default function Gallery() {
       filter: "2024",
       likes: 89,
       date: "2024-05-10",
+      poster: defaultPoster,
     },
-     {
+    {
       id: 6,
       type: "image",
       src: "/img/68d623b4-2a84-4991-a59a-76d8ff807ca4.jpeg",
@@ -71,16 +74,19 @@ export default function Gallery() {
       filter: "2024",
       likes: 89,
       date: "2024-05-10",
+      poster: defaultPoster,
     },
     {
       id: 3,
       type: "video",
       src: "/videos/video.mp4",
-      titulo: "La Hinchada en Acción",
-      desc: "Ambiente espectacular en el estadio",
-      tag: "aficion",
+      title: "La Hinchada en Acción",
+      description: "Ambiente espectacular en el estadio",
+      category: "aficion",
+      filter: "2024",
       likes: 456,
       poster: "/img/football-training-session-players.jpg",
+      date: "2024-05-12",
     },
     {
       id: 4,
@@ -92,17 +98,19 @@ export default function Gallery() {
       filter: "2024",
       likes: 789,
       date: "2024-05-20",
+      poster: defaultPoster,
     },
-     {
+    {
       id: 7,
       type: "image",
       src: "/img/3b107ac5-8dc4-43d3-8301-f3d21ef89306.jpeg",
-      title: "Levantando la Copa",
+      title: "Evento Especial",
       description: "Momento histórico del campeonato",
       category: "eventos",
       filter: "2024",
       likes: 789,
       date: "2024-05-20",
+      poster: defaultPoster,
     },
   ];
 
@@ -115,18 +123,14 @@ export default function Gallery() {
 
   const filteredItems = useMemo(() => {
     return galleryItems.filter((item) => {
-      const byCategory =
-        selectedCategory === "todos" ||
-        (item.type === "video"
-          ? item.tag === selectedCategory
-          : item.category === selectedCategory);
+      const byCategory = selectedCategory === "todos" || item.category === selectedCategory;
       const byFilter = selectedFilter === "todos" || item.filter === selectedFilter;
       const bySearch =
-        ((item.title || item.titulo)?.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        ((item.description || item.desc)?.toLowerCase().includes(searchTerm.toLowerCase()));
+        item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        item.description.toLowerCase().includes(searchTerm.toLowerCase());
       return byCategory && byFilter && bySearch;
     });
-  }, [galleryItems, selectedCategory, selectedFilter, searchTerm]);
+  }, [selectedCategory, selectedFilter, searchTerm]);
 
   const closeModal = () => {
     if (modalVideoRef.current) {
@@ -178,66 +182,63 @@ export default function Gallery() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-             {filteredItems.map((item) => (
-  <div
-    key={item.id}
-    className="bg-white rounded-xl overflow-hidden shadow-sm group cursor-pointer relative"
-    onClick={() => setSelectedItem(item)}
-  >
-    <div className="relative">
-      {item.type === "video" ? (
-        <video
-          src={item.src}
-          className="w-full h-40 object-cover group-hover:scale-105 transition-transform rounded-md"
-          muted
-          playsInline
-          preload="metadata"
-        />
-      ) : (
-        <img
-          src={item.src}
-          alt={item.title || item.titulo}
-          className="w-full h-40 object-cover group-hover:scale-105 transition-transform rounded-md"
-          onError={(e) => {
-            e.currentTarget.onerror = null;
-            e.currentTarget.src = defaultPoster;
-          }}
-        />
-      )}
+                {filteredItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="bg-white rounded-xl overflow-hidden shadow-sm group cursor-pointer relative"
+                    onClick={() => setSelectedItem(item)}
+                  >
+                    <div className="relative">
+                      {item.type === "video" ? (
+                        <video
+                          src={item.src}
+                          className="w-full h-40 object-cover group-hover:scale-105 transition-transform rounded-md"
+                          muted
+                          playsInline
+                          preload="metadata"
+                        />
+                      ) : (
+                        <img
+                          src={item.src}
+                          alt={item.title}
+                          className="w-full h-40 object-cover group-hover:scale-105 transition-transform rounded-md"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = defaultPoster;
+                          }}
+                        />
+                      )}
 
-      {/* Overlay de play solo para videos */}
-      {item.type === "video" && (
-        <span className="absolute inset-0 flex items-center justify-center text-white text-2xl font-bold drop-shadow-lg">
-          ▶
-        </span>
-      )}
+                      {item.type === "video" && (
+                        <span className="absolute inset-0 flex items-center justify-center text-white text-2xl font-bold drop-shadow-lg">
+                          ▶
+                        </span>
+                      )}
 
-      {/* Overlay hover */}
-      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex flex-col justify-end p-4 text-white">
-        <h4 className="font-bold text-sm">{item.title || item.titulo}</h4>
-        <p className="text-xs mb-2">{item.description || item.desc}</p>
-        <div className="flex gap-3 text-white">
-          <button className="hover:text-red-500" aria-label="Me gusta">
-            <Heart size={18} />
-          </button>
-          <button className="hover:text-blue-400" aria-label="Compartir">
-            <Share2 size={18} />
-          </button>
-          <a
-            href={item.src}
-            download
-            className="hover:text-green-400"
-            aria-label="Descargar"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Download size={18} />
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-))}
-
+                      <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex flex-col justify-end p-4 text-white">
+                        <h4 className="font-bold text-sm">{item.title}</h4>
+                        <p className="text-xs mb-2">{item.description}</p>
+                        <div className="flex gap-3 text-white">
+                          <button className="hover:text-red-500" aria-label="Me gusta">
+                            <Heart size={18} />
+                          </button>
+                          <button className="hover:text-blue-400" aria-label="Compartir">
+                            <Share2 size={18} />
+                          </button>
+                          <a
+                            href={item.src}
+                            download
+                            className="hover:text-green-400"
+                            aria-label="Descargar"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Download size={18} />
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </main>
           </div>
@@ -246,7 +247,6 @@ export default function Gallery() {
 
       <Socials />
 
-      {/* Modal */}
       {selectedItem && (
         <div
           className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
@@ -257,7 +257,7 @@ export default function Gallery() {
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              className="absolute -top-4 -right-4 bg-red-500 text-white rounded-full px-3 py-1 shadow hover:bg-red-600 z-50"
+              className="absolute -top-4 -right-4 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center shadow hover:bg-red-600 z-50"
               onClick={closeModal}
             >
               ✕
@@ -266,7 +266,7 @@ export default function Gallery() {
             {selectedItem.type === "image" ? (
               <img
                 src={selectedItem.src}
-                alt={selectedItem.title || selectedItem.titulo}
+                alt={selectedItem.title}
                 className="max-h-[80vh] max-w-full object-contain rounded-lg"
               />
             ) : (
@@ -281,8 +281,8 @@ export default function Gallery() {
             )}
 
             <div className="p-4 text-center">
-              <h3 className="text-lg font-bold">{selectedItem.titulo || selectedItem.title}</h3>
-              <p className="text-gray-600 text-sm">{selectedItem.desc || selectedItem.description}</p>
+              <h3 className="text-lg font-bold">{selectedItem.title}</h3>
+              <p className="text-gray-600 text-sm">{selectedItem.description}</p>
             </div>
           </div>
         </div>
