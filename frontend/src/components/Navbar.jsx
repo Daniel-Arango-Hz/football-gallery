@@ -165,7 +165,7 @@ export default function Navbar() {
               className="w-15 h-15 object-contain"
             />
             <div>
-              <h1 className="font-bold text-white">Club Deportivo Guacari</h1>
+              <h1 className="font-bold text-white">Club Deportivo Racing Giacari</h1>
               <p className="font-bold text-white"></p>
             </div>
           </NavLink>
