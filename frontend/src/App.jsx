@@ -13,8 +13,18 @@ export default function App() {
   const location = useLocation();
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
+    // Scroll to top on route change
+    if (location.hash) {
+      // Si hay un hash, scroll al elemento
+      const element = document.getElementById(location.hash.replace("#", ""));
+      if (element) {
+        setTimeout(() => element.scrollIntoView({ behavior: "smooth" }), 100);
+      }
+    } else {
+      // Si no hay hash, scroll al top
+      window.scrollTo(0, 0);
+    }
+  }, [location.pathname, location.hash]);
 
   return (
     <div className="font-sans">

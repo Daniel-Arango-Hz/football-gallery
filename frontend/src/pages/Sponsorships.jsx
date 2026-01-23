@@ -70,7 +70,7 @@ export default function Sponsorships() {
       </section>
 
       {/* Patrocinadores Actuales */}
-      <section className="py-16 px-4 bg-white">
+      <section id="beneficios" className="py-16 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold mb-12 text-gray-900">Nuestros Patrocinadores</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -87,7 +87,7 @@ export default function Sponsorships() {
       </section>
 
       {/* Beneficios */}
-      <section className="py-16 px-4 bg-gray-50">
+      <section id="afiliacion" className="py-16 px-4 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold mb-12 text-center text-gray-900">¿Por Qué Patrocinarnos?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -103,7 +103,7 @@ export default function Sponsorships() {
       </section>
 
       {/* Formulario de Contacto */}
-      <section className="py-16 px-4 bg-blue-900 text-white">
+      <section id="membresia" className="py-16 px-4 bg-blue-900 text-white">
         <div className="max-w-2xl mx-auto">
           <h2 className="text-4xl font-bold mb-2 text-center">¿Interesado en Patrocinarnos?</h2>
           <p className="text-center text-gray-300 mb-12">Cuéntanos sobre tu empresa y cómo podemos colaborar juntos</p>

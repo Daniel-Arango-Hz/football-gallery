@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Trophy, Users, Target, Award } from "lucide-react";
 import Socials from "../components/Socials";
 
@@ -66,7 +67,37 @@ const palmares = [
   { year: 2020, title: "Copa Departamental" },
 ];
 
+const menuOptions = [
+  { id: "escudo", label: "El Escudo" },
+  { id: "cronologia", label: "Cronología" },
+  { id: "valores", label: "Nuestros Valores" },
+  { id: "palmares", label: "Palmarés" },
+];
+
 export default function History() {
+  const [selected, setSelected] = useState("escudo");
+  const location = useLocation();
+
+  useEffect(() => {
+    // Función para actualizar según el hash
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1);
+      console.log("Hash actual:", hash);
+      if (hash && menuOptions.find(opt => opt.id === hash)) {
+        setSelected(hash);
+      } else if (!hash) {
+        setSelected("escudo");
+      }
+    };
+
+    // Detectar si viene de un hash en la URL al cargar
+    handleHashChange();
+
+    // Escuchar cambios en el hash
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, [location]);
+
   return (
     <div>
       {/* Hero */}
@@ -77,91 +108,122 @@ export default function History() {
         </div>
       </section>
 
-      {/* Timeline */}
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold mb-12 text-center text-gray-900">Cronología</h2>
-          <div className="space-y-8">
-            {timeline.map((event, index) => (
-              <div key={index} className="flex gap-6">
-                <div className="flex-shrink-0 flex items-start pt-1">
-                  <div className="flex items-center justify-center h-12 w-12 rounded-full bg-blue-700 text-white text-2xl">
-                    {event.icon}
+      {/* Contenido Principal con Menú Lateral */}
+      <div className="flex flex-col md:flex-row max-w-7xl mx-auto">
+        {/* Menú Lateral Izquierdo */}
+        <aside className="w-full md:w-1/4 bg-gray-50 p-6">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6">Secciones</h3>
+          <nav className="space-y-3">
+            {menuOptions.map((option) => (
+              <button
+                key={option.id}
+                onClick={() => {
+                  setSelected(option.id);
+                  window.location.hash = option.id;
+                }}
+                className={`w-full text-left px-4 py-3 rounded-lg font-bold transition-colors ${
+                  selected === option.id
+                    ? "bg-blue-500 text-white"
+                    : "text-gray-900 bg-white hover:bg-blue-200"
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </nav>
+        </aside>
+
+        {/* Contenido Principal */}
+        <main className="w-full md:w-3/4 p-6 md:p-8">
+          {/* El Escudo */}
+          {selected === "escudo" && (
+            <section id="escudo" className="space-y-6">
+              <h2 className="text-4xl font-bold text-gray-900">El Escudo</h2>
+              <div className="flex flex-col md:flex-row items-center gap-8">
+                <div className="md:w-1/3 flex justify-center">
+                  <div className="bg-gray-100 rounded-xl p-8 flex items-center justify-center h-64 w-64">
+                    <img
+                      src="/img/escudo-club.png"
+                      alt="Escudo del Club"
+                      className="w-full h-full object-contain"
+                    />
                   </div>
                 </div>
-                <div className="flex-grow border-l-2 border-blue-700 pl-6 pb-8">
-                  <h3 className="text-2xl font-bold text-gray-900">{event.year}</h3>
-                  <p className="text-xl font-semibold text-blue-700 mt-1">{event.title}</p>
-                  <p className="text-gray-600 mt-2">{event.description}</p>
+                <div className="md:w-2/3">
+                  <p className="text-lg text-gray-700 mb-4">
+                    El escudo del Club Deportivo Guacari representa nuestra identidad y valores desde el año 2000. Sus colores azul y blanco simbolizan la lealtad, la pureza y la excelencia que caracteriza a nuestra institución.
+                  </p>
+                  <p className="text-lg text-gray-700 mb-4">
+                    Cada elemento del escudo tiene un significado profundo: el círculo representa la unidad de nuestra comunidad, las barras azules simbolizan la fortaleza y determinación, mientras que el blanco representa la transparencia y los altos valores morales por los que nos regimos.
+                  </p>
+                  <p className="text-lg text-gray-700">
+                    A través de más de dos décadas, nuestro escudo ha estado presente en cada logro, cada triunfo y cada desafío que hemos enfrentado. Es el símbolo del compromiso de todos nuestros miembros con la excelencia deportiva y formativa.
+                  </p>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </section>
+          )}
 
-      {/* Valores */}
-      <section className="py-16 px-4 bg-gray-50">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold mb-12 text-center text-gray-900">Nuestros Valores</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {values.map((value, index) => (
-              <div key={index} className="bg-white p-8 rounded-xl shadow-md text-center">
-                <div className="flex justify-center mb-4">{value.icon}</div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">{value.title}</h3>
-                <p className="text-gray-600">{value.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Palmarés */}
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-bold mb-12 text-center text-gray-900">Palmarés</h2>
-          <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-8">
-            <div className="space-y-4">
-              {palmares.map((trophy, index) => (
-                <div key={index} className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm">
-                  <div>
-                    <p className="text-gray-600 text-sm font-semibold">{trophy.year}</p>
-                    <p className="text-lg font-bold text-gray-900">{trophy.title}</p>
+          {/* Cronología */}
+          {selected === "cronologia" && (
+            <section id="cronologia" className="space-y-6">
+              <h2 className="text-4xl font-bold text-gray-900">Cronología</h2>
+              <div className="space-y-8">
+                {timeline.map((event, index) => (
+                  <div key={index} className="flex gap-6">
+                    <div className="flex-shrink-0 flex items-start pt-1">
+                      <div className="flex items-center justify-center h-12 w-12 rounded-full bg-blue-700 text-white text-2xl">
+                        {event.icon}
+                      </div>
+                    </div>
+                    <div className="flex-grow border-l-2 border-blue-700 pl-6 pb-8">
+                      <h3 className="text-2xl font-bold text-gray-900">{event.year}</h3>
+                      <p className="text-xl font-semibold text-blue-700 mt-1">{event.title}</p>
+                      <p className="text-gray-600 mt-2">{event.description}</p>
+                    </div>
                   </div>
-                  <Trophy className="w-8 h-8 text-yellow-500" />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+                ))}
+              </div>
+            </section>
+          )}
 
-      {/* Instalaciones */}
-      <section className="py-16 px-4 bg-gray-50">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold mb-12 text-center text-gray-900">Nuestras Instalaciones</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white rounded-xl overflow-hidden shadow-lg">
-              <div className="bg-gray-300 h-64 flex items-center justify-center">
-                <span className="text-gray-500">Campo Principal</span>
+          {/* Valores */}
+          {selected === "valores" && (
+            <section id="valores" className="space-y-6">
+              <h2 className="text-4xl font-bold text-gray-900">Nuestros Valores</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {values.map((value, index) => (
+                  <div key={index} className="bg-white p-8 rounded-xl shadow-md text-center">
+                    <div className="flex justify-center mb-4">{value.icon}</div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">{value.title}</h3>
+                    <p className="text-gray-600">{value.description}</p>
+                  </div>
+                ))}
               </div>
-              <div className="p-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Campo de Entrenamiento</h3>
-                <p className="text-gray-600">Cancha de pasto natural de última generación con iluminación LED.</p>
+            </section>
+          )}
+
+          {/* Palmarés */}
+          {selected === "palmares" && (
+            <section id="palmares" className="space-y-6">
+              <h2 className="text-4xl font-bold text-gray-900">Palmarés</h2>
+              <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-8">
+                <div className="space-y-4">
+                  {palmares.map((trophy, index) => (
+                    <div key={index} className="flex items-center justify-between bg-white p-4 rounded-lg shadow-sm">
+                      <div>
+                        <p className="text-gray-600 text-sm font-semibold">{trophy.year}</p>
+                        <p className="text-lg font-bold text-gray-900">{trophy.title}</p>
+                      </div>
+                      <Trophy className="w-8 h-8 text-yellow-500" />
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="bg-white rounded-xl overflow-hidden shadow-lg">
-              <div className="bg-gray-300 h-64 flex items-center justify-center">
-                <span className="text-gray-500">Gimnasio</span>
-              </div>
-              <div className="p-6">
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Centro de Acondicionamiento</h3>
-                <p className="text-gray-600">Equipamiento moderno para preparación física y recuperación.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+            </section>
+          )}
+        </main>
+      </div>
 
       <Socials />
     </div>
