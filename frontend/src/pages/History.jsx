@@ -79,23 +79,10 @@ export default function History() {
   const location = useLocation();
 
   useEffect(() => {
-    // Función para actualizar según el hash
-    const handleHashChange = () => {
-      const hash = window.location.hash.slice(1);
-      console.log("Hash actual:", hash);
-      if (hash && menuOptions.find(opt => opt.id === hash)) {
-        setSelected(hash);
-      } else if (!hash) {
-        setSelected("escudo");
-      }
-    };
-
-    // Detectar si viene de un hash en la URL al cargar
-    handleHashChange();
-
-    // Escuchar cambios en el hash
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
+    // Si viene del navbar con una sección específica
+    if (location.state?.section) {
+      setSelected(location.state.section);
+    }
   }, [location]);
 
   return (
@@ -119,7 +106,6 @@ export default function History() {
                 key={option.id}
                 onClick={() => {
                   setSelected(option.id);
-                  window.location.hash = option.id;
                 }}
                 className={`w-full text-left px-4 py-3 rounded-lg font-bold transition-colors ${
                   selected === option.id

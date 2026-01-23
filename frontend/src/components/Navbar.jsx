@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuVisible, setMenuVisible] = useState(false);
@@ -19,6 +21,19 @@ export default function Navbar() {
     if (menuOpen) {
       setMenuVisible(true);
       document.body.style.overflow = "hidden";
+      // Detectar la categoría actual basado en la ruta
+      const currentPath = location.pathname;
+      if (currentPath.includes("/historia")) {
+        setSelectedCategory("el-club");
+      } else if (currentPath.includes("/patrocinios")) {
+        setSelectedCategory("socios");
+      } else if (currentPath.includes("/jugadores")) {
+        setSelectedCategory("futbol");
+      } else if (currentPath.includes("/galería")) {
+        setSelectedCategory("galeria");
+      } else if (currentPath.includes("/noticias")) {
+        setSelectedCategory("noticias");
+      }
     } else {
       // Mantener visible durante la animación
       const timer = setTimeout(() => {
@@ -27,7 +42,7 @@ export default function Navbar() {
       document.body.style.overflow = "auto";
       return () => clearTimeout(timer);
     }
-  }, [menuOpen]);
+  }, [menuOpen, location]);
 
   const menuCategories = {
     "el-club": {
@@ -53,8 +68,6 @@ export default function Navbar() {
       items: [
         { label: "Equipo Principal", path: "/jugadores" },
         { label: "Categorías Inferiores", path: "/jugadores" },
-        { label: "Resultados", path: "/noticias" },
-        { label: "Fixture", path: "/noticias" },
       ],
     },
     galeria: {
@@ -95,6 +108,37 @@ export default function Navbar() {
     { label: "Certificaciones de Calidad", path: "/" },
     { label: "Vidas Racinguistas", path: "/" },
   ];
+
+  const handleCategoryClick = (categoryId) => {
+    const isMobile = window.innerWidth < 640;
+    // Siempre actualiza el estado para mostrar la selección
+    setSelectedCategory(categoryId);
+    
+    if (isMobile) {
+      // En móvil, navega directamente al primer item de la categoría
+      const firstItem = menuCategories[categoryId]?.items[0];
+      if (firstItem) {
+        setMenuOpen(false);
+        setTimeout(() => {
+          navigate(firstItem.path);
+          // Scroll dejando espacio para el navbar sticky (aproximadamente 100px)
+          window.scrollTo(0, 100);
+        }, 100);
+      }
+    }
+  };
+
+  const handleNavigateWithHash = (path) => {
+    setMenuOpen(false);
+    // Extrae la sección del item si existe
+    const section = path.split('#')[1];
+    if (section) {
+      // Si hay una sección, navega con estado
+      navigate(path.split('#')[0], { state: { section } });
+    } else {
+      navigate(path);
+    }
+  };
 
   const socialLinks = [
     { icon: "spotify", url: "https://spotify.com" },
@@ -163,12 +207,12 @@ export default function Navbar() {
               {/* Contenido Principal - Sin header porque usa el navbar */}
               <div className="flex flex-1 overflow-hidden relative pt-32">
                 {/* Columna Izquierda - Categorías Principales */}
-                <div className="w-full md:w-1/4 overflow-y-auto">
+                <div className="w-full sm:w-1/3 md:w-1/4 overflow-y-auto">
                   {mainNavItems.map((category) => (
                     <button
                       key={category.id}
-                      onClick={() => setSelectedCategory(category.id)}
-                      className={`w-full text-left px-6 py-4 font-bold transition-colors ${
+                      onClick={() => handleCategoryClick(category.id)}
+                      className={`w-full text-left px-4 sm:px-6 py-4 font-bold transition-colors text-sm sm:text-base ${
                         selectedCategory === category.id
                           ? "bg-blue-800 text-white"
                           : "text-white hover:bg-blue-700"
@@ -177,36 +221,35 @@ export default function Navbar() {
                       {category.label}
                     </button>
                   ))}
-                  <div className="px-6 py-4 flex items-center justify-center space-x-2 cursor-pointer hover:bg-blue-700 transition-colors">
+                  <div className="px-4 sm:px-6 py-4 flex items-center justify-center space-x-2 cursor-pointer hover:bg-blue-700 transition-colors">
                     <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-white font-bold">BUSCAR</span>
+                    <span className="text-white font-bold text-sm sm:text-base">BUSCAR</span>
                   </div>
                 </div>
 
-                {/* Columnas de Contenido - Visibles en Desktop */}
-                <div className="hidden md:flex flex-1">
+                {/* Columnas de Contenido - Visibles en Desktop y Tablet */}
+                <div className="hidden sm:flex flex-1">
                   {/* Columna Central - Subcategorías */}
-                  <div className="w-1/3 overflow-y-auto">
+                  <div className="w-1/2 md:w-1/3 overflow-y-auto">
                     {menuCategories[selectedCategory] && (
                       <>
-                        <div className="px-8 py-6">
-                          <h2 className="text-2xl font-bold text-white">
+                        <div className="px-4 sm:px-6 md:px-8 py-4 sm:py-6">
+                          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white">
                             {menuCategories[selectedCategory].label}
                           </h2>
                         </div>
-                        <div className="p-8">
+                        <div className="p-4 sm:p-6 md:p-8">
                           <ul className="space-y-3">
                             {menuCategories[selectedCategory].items.map((item) => (
                               <li key={item.label}>
-                                <NavLink
-                                  to={item.path}
-                                  onClick={() => setMenuOpen(false)}
-                                  className="text-white font-bold hover:text-gray-200 transition-colors"
+                                <button
+                                  onClick={() => handleNavigateWithHash(item.path)}
+                                  className="text-white font-bold hover:text-gray-200 transition-colors text-sm sm:text-base w-full text-left"
                                 >
                                   {item.label}
-                                </NavLink>
+                                </button>
                               </li>
                             ))}
                           </ul>
@@ -216,18 +259,18 @@ export default function Navbar() {
                   </div>
 
                   {/* Columna Derecha - Opciones Adicionales */}
-                  <div className="w-1/3 overflow-y-auto">
-                    <div className="px-8 py-6">
-                      <h2 className="text-lg font-bold text-white">MÁS</h2>
+                  <div className="w-1/2 md:w-1/3 overflow-y-auto">
+                    <div className="px-4 sm:px-6 md:px-8 py-4 sm:py-6">
+                      <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white">MÁS</h2>
                     </div>
-                    <div className="p-8">
+                    <div className="p-4 sm:p-6 md:p-8">
                       <ul className="space-y-3">
                         {additionalOptions.map((item) => (
                           <li key={item.label}>
                             <NavLink
                               to={item.path}
                               onClick={() => setMenuOpen(false)}
-                              className="text-white font-bold hover:text-gray-200 transition-colors"
+                              className="text-white font-bold hover:text-gray-200 transition-colors text-sm sm:text-base"
                             >
                               {item.label}
                             </NavLink>
@@ -238,32 +281,51 @@ export default function Navbar() {
                   </div>
                 </div>
 
-                {/* Vista Móvil - Subcategorías */}
-                <div className="md:hidden flex-1 overflow-y-auto">
+                {/* Vista Móvil - Subcategorías y Opciones Adicionales */}
+                <div className="sm:hidden flex-1 overflow-y-auto">
                   {menuCategories[selectedCategory] && (
                     <>
-                      <div className="px-6 py-4">
-                        <h2 className="text-lg font-bold text-white">
+                      <div className="px-4 py-4">
+                        <h2 className="text-base font-bold text-white">
                           {menuCategories[selectedCategory].label}
                         </h2>
                       </div>
-                      <div className="p-6">
-                        <ul className="space-y-3">
+                      <div className="p-4">
+                        <ul className="space-y-2">
                           {menuCategories[selectedCategory].items.map((item) => (
-                            <li key={item.label} className="pb-2">
-                              <NavLink
-                                to={item.path}
-                                onClick={() => setMenuOpen(false)}
-                                className="text-gray-900 font-bold py-2 block hover:text-blue-600 transition-colors"
+                            <li key={item.label} className="pb-1">
+                              <button
+                                onClick={() => handleNavigateWithHash(item.path)}
+                                className="text-white font-bold py-2 block hover:text-gray-200 transition-colors text-sm w-full text-left"
                               >
                                 {item.label}
-                              </NavLink>
+                              </button>
                             </li>
                           ))}
                         </ul>
                       </div>
                     </>
                   )}
+
+                  {/* Opciones Adicionales - Vista Móvil */}
+                  <div className="px-4 py-4 border-t border-white border-opacity-30">
+                    <h2 className="text-base font-bold text-white">MÁS</h2>
+                  </div>
+                  <div className="p-4">
+                    <ul className="space-y-2">
+                      {additionalOptions.map((item) => (
+                        <li key={item.label} className="pb-1">
+                          <NavLink
+                            to={item.path}
+                            onClick={() => setMenuOpen(false)}
+                            className="text-white font-bold py-2 block hover:text-gray-200 transition-colors text-sm"
+                          >
+                            {item.label}
+                          </NavLink>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
 
                 {/* Botón Cerrar - Una sola X */}
