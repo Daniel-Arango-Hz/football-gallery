@@ -1,15 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import ImageLoader from "./ImageLoader";
 
 export default function Carousel({ images }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [loadedImages, setLoadedImages] = useState({});
+  const imgRef = useRef(null);
 
+  // Verificar si la imagen actual está cargada
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [images.length]);
+    const checkImageLoaded = () => {
+      const img = imgRef.current;
+      if (img && img.complete) {
+        setLoadedImages(prev => ({...prev, [images[currentIndex]?.id]: true}));
+      } else if (!img || !img.src) {
+        // Si no hay imagen, mostrarla de todas formas
+        setLoadedImages(prev => ({...prev, [images[currentIndex]?.id]: true}));
+      }
+    };
+
+    checkImageLoaded();
+    const timer = setTimeout(checkImageLoaded, 50);
+    return () => clearTimeout(timer);
+  }, [currentIndex, images]);
 
   const goToPrevious = () => {
     setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
@@ -18,6 +31,14 @@ export default function Carousel({ images }) {
   const goToNext = () => {
     setCurrentIndex((prev) => (prev + 1) % images.length);
   };
+
+  // Autoplay
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % images.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [images.length]);
 
   if (!images || images.length === 0) return null;
 
@@ -30,14 +51,29 @@ export default function Carousel({ images }) {
             index === currentIndex ? "opacity-100" : "opacity-0"
           }`}
         >
-          <img
-            src={image.src}
-            alt={image.title}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/30 flex flex-col justify-end p-8">
-            <h2 className="text-3xl font-bold text-white mb-2">{image.title}</h2>
-            <p className="text-white text-lg">{image.description}</p>
+          <div className="relative w-full h-full">
+            {index === currentIndex && !loadedImages[image.id] && (
+              <div className="absolute inset-0 z-10 pointer-events-none">
+                <ImageLoader />
+              </div>
+            )}
+            <img
+              ref={index === currentIndex ? imgRef : null}
+              src={image.src}
+              alt={image.title}
+              className="carousel-img w-full h-full object-cover"
+              data-image-id={image.id}
+              onLoad={(e) => {
+                setLoadedImages(prev => ({...prev, [image.id]: true}));
+              }}
+              onError={() => {
+                setLoadedImages(prev => ({...prev, [image.id]: true}));
+              }}
+            />
+            <div className="absolute inset-0 bg-black/30 flex flex-col justify-end p-8">
+              <h2 className="text-3xl font-bold text-white mb-2">{image.title}</h2>
+              <p className="text-white text-lg">{image.description}</p>
+            </div>
           </div>
         </div>
       ))}

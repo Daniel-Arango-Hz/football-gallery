@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import ImageLoader from "./ImageLoader";
 
 const destacados = [
   {
@@ -32,6 +33,27 @@ const destacados = [
 
 export default function Featured() {
   const [selectedItem, setSelectedItem] = useState(null);
+  const [loadedImages, setLoadedImages] = useState({});
+
+  // Detectar imágenes que ya están cargadas en caché
+  useEffect(() => {
+    const checkLoadedImages = () => {
+      const nuevoCargadas = {};
+      document.querySelectorAll('img').forEach((img, idx) => {
+        if (img.complete && img.src.includes('img/')) {
+          const itemId = idx;
+          nuevoCargadas[itemId] = true;
+        }
+      });
+      if (Object.keys(nuevoCargadas).length > 0) {
+        setLoadedImages(prev => ({...prev, ...nuevoCargadas}));
+      }
+    };
+
+    checkLoadedImages();
+    const timer = setTimeout(checkLoadedImages, 300);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <section className="px-10 py-16 relative">
@@ -45,12 +67,21 @@ export default function Featured() {
             className="bg-blue-50 rounded-lg shadow overflow-hidden"
           >
             {item.type === "image" ? (
-              <img
-                src={item.src}
-                alt={item.titulo}
-                className="w-full h-48 object-cover cursor-pointer"
-                onClick={() => setSelectedItem(item)}
-              />
+              <div className="relative w-full h-48 bg-gray-200 rounded overflow-hidden" data-item-id={item.id}>
+                {!loadedImages[item.id] && (
+                  <div className="absolute inset-0 z-10 pointer-events-none">
+                    <ImageLoader />
+                  </div>
+                )}
+                <img
+                  src={item.src}
+                  alt={item.titulo}
+                  className="w-full h-48 object-cover cursor-pointer"
+                  onClick={() => setSelectedItem(item)}
+                  onLoad={() => setLoadedImages(prev => ({...prev, [item.id]: true}))}
+                  onError={() => setLoadedImages(prev => ({...prev, [item.id]: true}))}
+                />
+              </div>
             ) : (
               <video
                 src={item.src}

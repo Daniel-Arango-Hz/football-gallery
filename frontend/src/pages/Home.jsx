@@ -1,10 +1,51 @@
-import React from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Trophy, Users, Zap, Target } from "lucide-react";
 import Hero from "../components/Hero";
 import Socials from "../components/Socials";
+import ImageLoader from "../components/ImageLoader";
+import Modal from "../components/Modal";
 
 export default function Home() {
+  const [loadedImages, setLoadedImages] = useState({});
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState(null);
+  const [modalType, setModalType] = useState(null);
+
+  const handleOpenImageModal = (item) => {
+    setModalContent(item);
+    setModalType("imagen");
+    setModalOpen(true);
+  };
+
+  const handleOpenNewsModal = (noticia) => {
+    setModalContent(noticia);
+    setModalType("noticia");
+    setModalOpen(true);
+  };
+
+  // Detectar imágenes que ya están cargadas en caché
+  React.useEffect(() => {
+    const checkLoadedImages = () => {
+      const nuevoCargadas = {};
+      document.querySelectorAll('img[src]').forEach(img => {
+        if (img.complete) {
+          const dataId = img.parentElement?.parentElement?.getAttribute('data-item-id');
+          if (dataId) {
+            nuevoCargadas[dataId] = true;
+          }
+        }
+      });
+      if (Object.keys(nuevoCargadas).length > 0) {
+        setLoadedImages(prev => ({...prev, ...nuevoCargadas}));
+      }
+    };
+
+    checkLoadedImages();
+    const timer = setTimeout(checkLoadedImages, 300);
+    return () => clearTimeout(timer);
+  }, []);
+
   const destacados = [
     {
       id: 1,
@@ -114,17 +155,29 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {destacados.map((item) => (
-              <NavLink
+              <div
                 key={item.id}
-                to={item.link}
-                className="group rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:scale-105"
+                data-item-id={item.id}
+                className="group rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition transform hover:scale-105 cursor-pointer"
+                onClick={() => handleOpenImageModal(item)}
               >
-                <div className="relative overflow-hidden bg-gray-200 h-64">
-                  <img
-                    src={item.src}
-                    alt={item.titulo}
-                    className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
-                  />
+              <div className="relative overflow-hidden bg-gray-200 h-64">
+                {!loadedImages[item.id] && (
+                  <div className="absolute inset-0 z-10 pointer-events-none">
+                    <ImageLoader />
+                  </div>
+                )}
+                <img
+                  src={item.src}
+                  alt={item.titulo}
+                  className="w-full h-full object-cover group-hover:scale-110 transition duration-300"
+                  onLoad={(e) => {
+                    setLoadedImages(prev => ({...prev, [item.id]: true}));
+                  }}
+                  onError={(e) => {
+                    setLoadedImages(prev => ({...prev, [item.id]: true}));
+                  }}
+                />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-4">
                     <span className="inline-block w-fit bg-yellow-400 text-gray-900 text-xs font-bold px-3 py-1 rounded-full mb-2">
                       {item.tag}
@@ -132,7 +185,7 @@ export default function Home() {
                     <h3 className="text-white font-bold text-lg">{item.titulo}</h3>
                   </div>
                 </div>
-              </NavLink>
+              </div>
             ))}
           </div>
           <div className="text-center mt-10">
@@ -179,7 +232,8 @@ export default function Home() {
             {ultimasNoticias.map((noticia) => (
               <article
                 key={noticia.id}
-                className="bg-gradient-to-br from-blue-50 to-gray-50 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition border-l-4 border-blue-700"
+                className="bg-gradient-to-br from-blue-50 to-gray-50 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition border-l-4 border-blue-700 cursor-pointer hover:scale-105"
+                onClick={() => handleOpenNewsModal(noticia)}
               >
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-3">
@@ -193,8 +247,9 @@ export default function Home() {
                   <NavLink
                     to="/noticias"
                     className="text-blue-700 font-semibold hover:text-blue-900 transition inline-flex items-center gap-2"
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    Leer más <span>→</span>
+                    Ir a Noticias <span>→</span>
                   </NavLink>
                 </div>
               </article>
@@ -267,6 +322,13 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <Modal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        content={modalContent}
+        type={modalType}
+      />
 
       <Socials />
     </>

@@ -5,6 +5,7 @@ import Carousel from "../components/Carousel";
 import Featured from "../components/Featured";
 import Socials from "../components/Socials";
 import GalleryFilter from "../components/GalleryFilter";
+import ImageLoader from "../components/ImageLoader";
 
 export default function Gallery() {
   const defaultPoster = "/img/default-poster.jpg";
@@ -118,8 +119,31 @@ export default function Gallery() {
   const [selectedFilter, setSelectedFilter] = useState("todos");
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
+  const [loadedImages, setLoadedImages] = useState({});
 
   const modalVideoRef = useRef(null);
+
+  // Detectar imágenes que ya están cargadas en caché
+  useEffect(() => {
+    const checkLoadedImages = () => {
+      const nuevoCargadas = {};
+      document.querySelectorAll('img[data-item-id]').forEach(img => {
+        if (img.complete) {
+          const itemId = img.parentElement?.getAttribute('data-item-id');
+          if (itemId) {
+            nuevoCargadas[itemId] = true;
+          }
+        }
+      });
+      if (Object.keys(nuevoCargadas).length > 0) {
+        setLoadedImages(prev => ({...prev, ...nuevoCargadas}));
+      }
+    };
+
+    checkLoadedImages();
+    const timer = setTimeout(checkLoadedImages, 300);
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredItems = useMemo(() => {
     return galleryItems.filter((item) => {
@@ -198,15 +222,23 @@ export default function Gallery() {
                           preload="metadata"
                         />
                       ) : (
-                        <img
-                          src={item.src}
-                          alt={item.title}
-                          className="w-full h-40 object-cover group-hover:scale-105 transition-transform rounded-md"
-                          onError={(e) => {
-                            e.currentTarget.onerror = null;
-                            e.currentTarget.src = defaultPoster;
-                          }}
-                        />
+                        <div className="relative w-full h-40 bg-gray-200 rounded-md overflow-hidden" data-item-id={item.id}>
+                          {!loadedImages[item.id] && (
+                            <div className="absolute inset-0 z-10 pointer-events-none">
+                              <ImageLoader />
+                            </div>
+                          )}
+                          <img
+                            src={item.src}
+                            alt={item.title}
+                            className="w-full h-40 object-cover group-hover:scale-105 transition-transform rounded-md"
+                            onLoad={() => setLoadedImages(prev => ({...prev, [item.id]: true}))}
+                            onError={(e) => {
+                              setLoadedImages(prev => ({...prev, [item.id]: true}));
+                              e.currentTarget.src = defaultPoster;
+                            }}
+                          />
+                        </div>
                       )}
 
                       {item.type === "video" && (
@@ -264,11 +296,14 @@ export default function Gallery() {
             </button>
 
             {selectedItem.type === "image" ? (
-              <img
-                src={selectedItem.src}
-                alt={selectedItem.title}
-                className="max-h-[80vh] max-w-full object-contain rounded-lg"
-              />
+              <div className="relative bg-gray-200 rounded-lg flex items-center justify-center min-h-[200px]">
+                <img
+                  src={selectedItem.src}
+                  alt={selectedItem.title}
+                  className="max-h-[80vh] max-w-full object-contain rounded-lg"
+                  onLoad={() => setLoadedImages({...loadedImages, [selectedItem.id]: true})}
+                />
+              </div>
             ) : (
               <video
                 ref={modalVideoRef}
