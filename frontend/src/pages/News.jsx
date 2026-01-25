@@ -9,7 +9,7 @@ const noticiasData = [
     fecha: "2024-05-20",
     categoria: "Partidos",
     imagen: "/img/a422a643-1573-441d-8e71-843c5fc3a5e0.jpeg",
-    contenido: "El Club Deportivo Guacari conquistó su primer título de la temporada con una victoria 3-1 en la final. Una actuación brillante del equipo aseguró el campeonato en una noche memorable para toda la afición.",
+    contenido: "El Club Deportivo Racing Guacariconquistó su primer título de la temporada con una victoria 3-1 en la final. Una actuación brillante del equipo aseguró el campeonato en una noche memorable para toda la afición.",
     excerpt: "Gol decisivo en el minuto 89 asegura el campeonato.",
     autor: "Redacción Deportiva",
   },

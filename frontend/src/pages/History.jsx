@@ -7,7 +7,7 @@ const timeline = [
   {
     year: 2000,
     title: "Fundación del Club",
-    description: "Club Deportivo Guacari es fundado con la misión de formar talentos jóvenes del fútbol.",
+    description: "Club Deportivo Racing Guacari es fundado con la misión de formar talentos jóvenes del fútbol.",
     icon: "🎯",
   },
   {
@@ -137,7 +137,7 @@ export default function History() {
                 </div>
                 <div className="md:w-2/3">
                   <p className="text-lg text-gray-700 mb-4">
-                    El escudo del Club Deportivo Guacari representa nuestra identidad y valores desde el año 2000. Sus colores azul y blanco simbolizan la lealtad, la pureza y la excelencia que caracteriza a nuestra institución.
+                    El escudo del Club Deportivo Racing Guacari representa nuestra identidad y valores desde el año 2000. Sus colores azul y blanco simbolizan la lealtad, la pureza y la excelencia que caracteriza a nuestra institución.
                   </p>
                   <p className="text-lg text-gray-700 mb-4">
                     Cada elemento del escudo tiene un significado profundo: el círculo representa la unidad de nuestra comunidad, las barras azules simbolizan la fortaleza y determinación, mientras que el blanco representa la transparencia y los altos valores morales por los que nos regimos.
